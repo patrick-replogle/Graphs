@@ -52,6 +52,10 @@ class SocialGraph:
         self.users[self.last_id] = User(name)
         self.friendships[self.last_id] = set()
 
+    def get_friendships(self, user_id):
+        if user_id in self.friendships:
+            return self.friendships[user_id]
+
     def populate_graph(self, num_users, avg_friendships):
         """
         Takes a number of users and an average number of friendships
@@ -100,17 +104,47 @@ class SocialGraph:
 
         The key is the friend's ID and the value is the path.
         """
-        visited = {}  # Note that this is a dictionary, not a set
+        if len(self.friendships) > 0:
+            # Store all network connection paths in a dictionary
+            # {key -> friend_id, value -> [shortest friendship path between friend and user_id]}
+            results = {}
+            # Iterate thru social network
+            for user in self.users:
+                # Ignore the user that was passed into the function
+                if user != user_id:
+                    # BFS to find shortest path of connections to get back to the user_id
+                    q = Queue()
+                    visited = set()
 
-        for friend_id in self.friendships[user_id]:
-            visited[friend_id] = set()
+                    q.enqueue([user])
 
-        return visited
+                    while q.size() > 0:
+                        curr_path = q.dequeue()
+                        curr_user = curr_path[-1]
+
+                        if curr_user not in visited:
+                            if curr_user == user_id:
+                                results[user] = curr_path
+
+                            visited.add(curr_user)
+
+                            for friend in self.get_friendships(curr_user):
+                                path_copy = curr_path[:]
+                                path_copy.append(friend)
+                                q.enqueue(path_copy)
+
+            return results
+
+        else:
+            print("There are currently no social paths in the network")
 
 
 if __name__ == '__main__':
     sg = SocialGraph()
     sg.populate_graph(10, 2)
+    print("\n")
     print("Friendships: ", sg.friendships)
     connections = sg.get_all_social_paths(1)
-    print(connections)
+    print("\n")
+    print("Connections:", connections)
+    print("\n")
