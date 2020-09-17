@@ -1,6 +1,30 @@
+import random
+
+
+class Queue():
+    def __init__(self):
+        self.queue = []
+
+    def enqueue(self, value):
+        self.queue.append(value)
+
+    def dequeue(self):
+        if self.size() > 0:
+            return self.queue.pop(0)
+        else:
+            return None
+
+    def size(self):
+        return len(self.queue)
+
+
 class User:
     def __init__(self, name):
         self.name = name
+
+    def __str__(self):
+        return f"{self.name}"
+
 
 class SocialGraph:
     def __init__(self):
@@ -42,11 +66,30 @@ class SocialGraph:
         self.last_id = 0
         self.users = {}
         self.friendships = {}
-        # !!!! IMPLEMENT ME
+        # random names to populate network with
+        first_names = ["John", "Frank", "George", "Jane", "Bruce", "Patrick", "James",
+                       "Superman", "Betty", "Wilma", "Michael", "Barney", "Spiderman"]
 
-        # Add users
+        last_names = ["Miller", "Wayne", "Rubble", "Doe", "McVey",
+                      "Gonzalez", "Replogle", "Franco", "Rae", "Espinosa"]
 
-        # Create friendships
+        if num_users > avg_friendships:
+            # Add users
+            for _ in range(num_users):
+                random_user_name = (random.choice(
+                    first_names) + " " + random.choice(last_names))
+
+                self.add_user(random_user_name)
+
+            # Create friendships
+            for user_id in self.users:
+                while len(self.friendships[user_id]) < 2:
+                    random_id = random.randint(1, num_users)
+
+                    if random_id not in self.friendships[user_id] and user_id != random_id:
+                        self.add_friendship(user_id, random_id)
+        else:
+            print("Number of users must be larger that number of friendship links")
 
     def get_all_social_paths(self, user_id):
         """
@@ -58,13 +101,16 @@ class SocialGraph:
         The key is the friend's ID and the value is the path.
         """
         visited = {}  # Note that this is a dictionary, not a set
-        # !!!! IMPLEMENT ME
+
+        for friend_id in self.friendships[user_id]:
+            visited[friend_id] = set()
+
         return visited
 
 
 if __name__ == '__main__':
     sg = SocialGraph()
     sg.populate_graph(10, 2)
-    print(sg.friendships)
+    print("Friendships: ", sg.friendships)
     connections = sg.get_all_social_paths(1)
     print(connections)
