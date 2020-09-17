@@ -92,6 +92,7 @@ class Graph:
         """
         if visited is None:
             visited = set()
+
         if starting_vertex not in visited:
             print(starting_vertex)
             visited.add(starting_vertex)
@@ -169,37 +170,60 @@ class Graph:
                     # push NEW path to stack
                     s.push(arr)
 
-    # second pass solution
-    def dfs_recursive(self, starting_vertex, destination_vertex, visited=None):
-        """
-        Return a list containing a path from
-        starting_vertex to destination_vertex in
-        depth-first order.
-
-        This should be done using recursion.
-        """
-        if visited is None:
+    # third pass solution
+    def dfs_recursive(self, starting_vertex, destination_vertex, visited=None, path=None):
+        if visited is None and path is None:
             visited = set()
-            starting_vertex = [starting_vertex]
+            path = []
 
-        curr_vertex = starting_vertex[len(starting_vertex) - 1]
+        visited.add(starting_vertex)
+        path = list(path)
+        path.append(starting_vertex)
 
-        if curr_vertex == destination_vertex:
-            return starting_vertex
+        if starting_vertex == destination_vertex:
+            return path
 
-        if curr_vertex not in visited:
-            visited.add(curr_vertex)
+        for neighbor in self.get_neighbors(path[-1]):
+            if neighbor not in visited:
+                new_path = self.dfs_recursive(
+                    neighbor, destination_vertex, visited, path)
 
-            for neighbor in self.get_neighbors(curr_vertex):
-                starting_vertex.append(neighbor)
+                if new_path is not None:
+                    return new_path
 
-                path = self.dfs_recursive(
-                    starting_vertex, destination_vertex, visited)
+        return None
 
-                if path is not None:
-                    return path
+    # second pass solution
+    # def dfs_recursive(self, starting_vertex, destination_vertex, visited=None):
+    #     """
+    #     Return a list containing a path from
+    #     starting_vertex to destination_vertex in
+    #     depth-first order.
 
-                starting_vertex.pop()
+    #     This should be done using recursion.
+    #     """
+    #     if visited is None:
+    #         visited = set()
+    #         starting_vertex = [starting_vertex]
+
+    #     curr_vertex = starting_vertex[-1]
+
+    #     if curr_vertex == destination_vertex:
+    #         return starting_vertex
+
+    #     if curr_vertex not in visited:
+    #         visited.add(curr_vertex)
+
+    #         for neighbor in self.get_neighbors(curr_vertex):
+    #             starting_vertex.append(neighbor)
+
+    #             path = self.dfs_recursive(
+    #                 starting_vertex, destination_vertex, visited)
+
+    #             if path is not None:
+    #                 return path
+
+    #             starting_vertex.pop()
 
     # first pass solution
     # def dfs_recursive(self, starting_vertex, destination_vertex, visited=None):
