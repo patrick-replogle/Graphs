@@ -52,6 +52,9 @@ class SocialGraph:
         self.users[self.last_id] = User(name)
         self.friendships[self.last_id] = set()
 
+    def get_users(self):
+        return self.users
+
     def get_friendships(self, user_id):
         if user_id in self.friendships:
             return self.friendships[user_id]
@@ -111,6 +114,7 @@ class SocialGraph:
         """
         # Reset graph
         self.reset()
+
         if num_users > avg_friendships:
 
             for i in range(num_users):
@@ -118,7 +122,7 @@ class SocialGraph:
 
             possible_friendships = []
 
-            for user_id in self.users:
+            for user_id in self.get_users():
                 for friend_id in range(user_id + 1, self.last_id + 1):
                     possible_friendships.append((user_id, friend_id))
 
@@ -139,7 +143,7 @@ class SocialGraph:
         The key is the friend's ID and the value is the path.
         """
         if len(self.friendships) > 0:
-            # {key -> friend_id, value -> [shortest friendship path between friend and user_id]}
+            # {key -> friend_id, value -> [shortest friendship path between user_id and friend]}
             results = {}
             # Iterate thru social network
             for user in self.users:
@@ -167,7 +171,7 @@ class SocialGraph:
             return results
 
         else:
-            print("There are currently no social paths in the network")
+            print("There are currently no friendship paths in the network")
 
 
 if __name__ == '__main__':
