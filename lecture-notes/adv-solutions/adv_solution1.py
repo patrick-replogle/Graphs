@@ -50,7 +50,7 @@ def get_number_of_unexplored_paths(room):
     return rooms_left
 
 
-# helper function to retrieve a rooms exits and the build an object with "?" marks for each exit as the value for each room_id key in visited
+# helper function to build initial visited dict entry. Ex ouput -> visited[room_id] = { "n": ?, "s": ?, "e": ?, "w": ? }
 def build_initial_dict_entry_value(visited, room):
     exits = room.get_exits()
 
