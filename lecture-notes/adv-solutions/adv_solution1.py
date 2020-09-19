@@ -93,9 +93,10 @@ def get_traversal_directions(maze):
                         visited, new_player.current_room)
                     visited[new_player.current_room.id][backtrack_move] = prev_room_id
                     break
+
         # If there are no unexplored exits in the current room, it's time to backtrack to a room with unexplored exits
         if get_number_of_unexplored_paths(visited[new_player.current_room.id]) == 0 and len(visited) < len(room_graph):
-            # The
+            # Last element of backtrack_array will be next move
             backtrack_move = reverse_directions.pop()
             # Move player back to the previous room
             new_player.travel(backtrack_move)
