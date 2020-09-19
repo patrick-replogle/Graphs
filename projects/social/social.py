@@ -37,12 +37,16 @@ class SocialGraph:
         Creates a bi-directional friendship
         """
         if user_id == friend_id:
-            print("WARNING: You cannot be friends with yourself")
+            # print("WARNING: You cannot be friends with yourself")
+            return False
         elif friend_id in self.friendships[user_id] or user_id in self.friendships[friend_id]:
-            print("WARNING: Friendship already exists")
+            # print("WARNING: Friendship already exists")
+            return False
         else:
             self.friendships[user_id].add(friend_id)
             self.friendships[friend_id].add(user_id)
+
+        return True
 
     def add_user(self, name):
         """
@@ -64,7 +68,7 @@ class SocialGraph:
         self.users = {}
         self.friendships = {}
 
-    def populate_graph(self, num_users, avg_friendships):
+    def populate_graph2(self, num_users, avg_friendships):
         """
         Takes a number of users and an average number of friendships
         as arguments
@@ -102,7 +106,7 @@ class SocialGraph:
         else:
             print("Number of users must be larger that number of friendship links")
 
-    def populate_graph2(self, num_users, avg_friendships):
+    def populate_graph(self, num_users, avg_friendships):
         """
         Takes a number of users and an average number of friendships
         as arguments
@@ -115,23 +119,21 @@ class SocialGraph:
         # Reset graph
         self.reset()
 
-        if num_users > avg_friendships:
+        for i in range(num_users):
+            self.add_user(f"User {i}")
 
-            for i in range(num_users):
-                self.add_user(f"User {i}")
+        target_friendships = num_users * avg_friendships
+        total_friendships = 0
+        collisions = 0
 
-            possible_friendships = []
+        while total_friendships < target_friendships:
+            user_id = random.randint(1, self.last_id)
+            friend_id = random.randint(1, self.last_id)
 
-            for user_id in self.get_users():
-                for friend_id in range(user_id + 1, self.last_id + 1):
-                    possible_friendships.append((user_id, friend_id))
-
-            for i in range(num_users * avg_friendships // 2):
-                friendships = possible_friendships[i]
-                self.add_friendship(friendships[0], friendships[1])
-
-        else:
-            print("Number of users must be larger that number of friendship links")
+            if self.add_friendship(user_id, friend_id):
+                total_friendships += 2
+            else:
+                collisions += 1
 
     def get_all_social_paths(self, user_id):
         """
