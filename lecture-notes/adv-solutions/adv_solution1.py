@@ -27,18 +27,22 @@ player = Player(world.starting_room)
 # Fill this out with directions to walk
 
 
-# Dict to find reverse movement of each direction
-reverse_move = {
-    "n": "s",
-    "s": "n",
-    "e": "w",
-    "w": "e"
-}
+# helper function to reverse movement of each direction
+def convert_direction(direction):
+    if direction == "n":
+        return "s"
+    if direction == "s":
+        return "n"
+    if direction == "w":
+        return "e"
+    if direction == "e":
+        return "w"
 
 
 # helper function to retrieve the number of unexplored exits for a room
 def get_number_of_unexplored_paths(room):
     rooms_left = 0
+
     for direction in room:
         if room[direction] == "?":
             rooms_left += 1
@@ -49,14 +53,16 @@ def get_number_of_unexplored_paths(room):
 # helper function to retrieve a rooms exits and the build an object with "?" marks for each exit as the value for each room_id key in visited
 def build_initial_dict_entry_value(visited, room):
     exits = room.get_exits()
+
     visited[room.id] = {}
+
     for move in exits:
         visited[room.id][move] = "?"
 
 
 # Main function to traverse maze -> output is an array containing the final directions to traverse maze
 def get_traversal_directions(maze):
-    return_directions = []
+    final_directions = []
     reverse_directions = []
     new_player = Player(maze.starting_room)
     visited = {}
@@ -68,17 +74,17 @@ def get_traversal_directions(maze):
         for move in new_player.current_room.get_exits():
             # If exit is unexplored
             if visited[new_player.current_room.id][move] == "?":
-                # Store current room id to fill in visited[next_room_id] = { reverse_move : prev_room_id }
+                # Store current room id to fill in visited[next_room_id] = { reverse_of_move : prev_room_id }
                 prev_room_id = new_player.current_room.id
                 # Store the opposite of each movement in reverse_directions array to simplify backtracking
-                backtrack_move = reverse_move[move]
+                backtrack_move = convert_direction(move)
                 # Move player
                 new_player.travel(move)
                 # Append the opposite of the move to reverse_directions arr
-                return_directions.append(move)
-                # Append the actual move into the return_directions arr
-                reverse_directions.append(reverse_move[move])
-                # Replace the question mark at visited[prev_room_id] = { move: with new room id }
+                final_directions.append(move)
+                # Append the actual move into the final_directions arr
+                reverse_directions.append(convert_direction(move))
+                # Replace the question mark at visited[prev_room_id] = { move: new_room_id }
                 visited[prev_room_id][move] = new_player.current_room.id
                 # Check if the new room has been visited already
                 if new_player.current_room.id not in visited:
@@ -93,10 +99,10 @@ def get_traversal_directions(maze):
             backtrack_move = reverse_directions.pop()
             # Move player back to the previous room
             new_player.travel(backtrack_move)
-            # Append the backtrack move to the return_directions arr
-            return_directions.append(backtrack_move)
+            # Append the backtrack move to the final_directions arr
+            final_directions.append(backtrack_move)
     # Return final directions array
-    return return_directions
+    return final_directions
 
 
 # traversal_path = ['n', 'n']
