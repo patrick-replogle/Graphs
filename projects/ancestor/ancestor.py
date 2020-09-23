@@ -14,10 +14,10 @@ def earliest_ancestor(ancestors, starting_node):
 
         ancestor_hashmap[a[1]].add(a[0])
     # Use DFS helper function to find oldest node or return -1 if starting_node is oldest
-    return DFS(starting_node, ancestor_hashmap)
+    return DFT(starting_node, ancestor_hashmap)
 
 
-def DFS(starting_node, ancestor_hashmap):
+def DFT(starting_node, ancestor_hashmap):
     s = Stack()
     visited = set()
     s.push([starting_node])
