@@ -1,3 +1,4 @@
+
 from room import Room
 from player import Player
 from world import World
@@ -31,11 +32,11 @@ player = Player(world.starting_room)
 def convert_direction(direction):
     if direction == "n":
         return "s"
-    if direction == "s":
+    elif direction == "s":
         return "n"
-    if direction == "w":
+    elif direction == "w":
         return "e"
-    if direction == "e":
+    elif direction == "e":
         return "w"
 
 
@@ -83,7 +84,7 @@ def get_traversal_directions(maze):
                 # Append the opposite of the move to reverse_directions arr
                 final_directions.append(move)
                 # Append the actual move into the final_directions arr
-                reverse_directions.append(convert_direction(move))
+                reverse_directions.append(backtrack_move)
                 # Replace the question mark at visited[prev_room_id] = { move: new_room_id }
                 visited[prev_room_id][move] = new_player.current_room.id
                 # Check if the new room has been visited already
