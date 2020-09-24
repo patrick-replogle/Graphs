@@ -25,22 +25,17 @@ world.print_rooms()
 # Create new player to start world
 player = Player(world.starting_room)
 
-# Fill this out with directions to walk
+
+# Dictionary to reverse movement of each direction
+convert_direction = {
+    "n": "s",
+    "s": "n",
+    "w": "e",
+    "e": "w"
+}
 
 
-# helper function to reverse movement of each direction
-def convert_direction(direction):
-    if direction == "n":
-        return "s"
-    elif direction == "s":
-        return "n"
-    elif direction == "w":
-        return "e"
-    elif direction == "e":
-        return "w"
-
-
-# helper function to retrieve the number of unexplored exits for a room
+# Function to retrieve the number of unexplored exits for a room
 def get_number_of_unexplored_paths(room):
     rooms_left = 0
 
@@ -51,7 +46,7 @@ def get_number_of_unexplored_paths(room):
     return rooms_left
 
 
-# helper function to build initial visited dict entry. Ex ouput -> visited[room_id] = { "n": ?, "s": ?, "e": ?, "w": ? }
+# Function to build initial visited dict entry. Ex ouput -> visited[room_id] = { "n": ?, "s": ?, "e": ?, "w": ? }
 def build_initial_dict_entry_value(visited, room):
     exits = room.get_exits()
 
@@ -71,32 +66,34 @@ def get_traversal_directions(maze):
     build_initial_dict_entry_value(visited, new_player.current_room)
     # Loop will run until all rooms have been visited
     while len(visited) < len(room_graph):
-        # Loop thru available exits in current room
-        for move in new_player.current_room.get_exits():
-            # If exit is unexplored
-            if visited[new_player.current_room.id][move] == "?":
-                # Store current room id to fill in visited[next_room_id] = { reverse_of_move : prev_room_id }
-                prev_room_id = new_player.current_room.id
-                # Store the opposite of each movement in reverse_directions array to simplify backtracking
-                backtrack_move = convert_direction(move)
-                # Move player
-                new_player.travel(move)
-                # Append the opposite of the move to reverse_directions arr
-                final_directions.append(move)
-                # Append the actual move into the final_directions arr
-                reverse_directions.append(backtrack_move)
-                # Replace the question mark at visited[prev_room_id] = { move: new_room_id }
-                visited[prev_room_id][move] = new_player.current_room.id
-                # Check if the new room has been visited already
-                if new_player.current_room.id not in visited:
-                    # If not, create an entry for it in the visited dict and then break out of loop
-                    build_initial_dict_entry_value(
-                        visited, new_player.current_room)
-                    visited[new_player.current_room.id][backtrack_move] = prev_room_id
-                    break
+        # If there are unexplored exits in the player's current room
+        if get_number_of_unexplored_paths(visited[new_player.current_room.id]) > 0:
+            # Loop thru available exits in current room
+            for move in new_player.current_room.get_exits():
+                # If exit is unexplored
+                if visited[new_player.current_room.id][move] == "?":
+                    # Store current room id to fill in visited[next_room_id] = { reverse_of_move : prev_room_id }
+                    prev_room_id = new_player.current_room.id
+                    # Store the opposite of each movement in reverse_directions array to simplify backtracking
+                    backtrack_move = convert_direction[move]
+                    # Move player
+                    new_player.travel(move)
+                    # Append the opposite of the move to reverse_directions arr
+                    final_directions.append(move)
+                    # Append the actual move into the final_directions arr
+                    reverse_directions.append(backtrack_move)
+                    # Replace the question mark at visited[prev_room_id] = { move: new_room_id }
+                    visited[prev_room_id][move] = new_player.current_room.id
+                    # Check if the new room has been visited already
+                    if new_player.current_room.id not in visited:
+                        # If not, create an entry for it in the visited dict and then break out of loop
+                        build_initial_dict_entry_value(
+                            visited, new_player.current_room)
+                        visited[new_player.current_room.id][backtrack_move] = prev_room_id
+                        break
 
-        # If there are no unexplored exits in the current room, it's time to backtrack to a room with unexplored exits
-        if get_number_of_unexplored_paths(visited[new_player.current_room.id]) == 0 and len(visited) < len(room_graph):
+        # Elif there are no unexplored exits in the current room, it's time to backtrack to a room with unexplored exits
+        elif get_number_of_unexplored_paths(visited[new_player.current_room.id]) == 0:
             # Last element of backtrack_array will be next move
             backtrack_move = reverse_directions.pop()
             # Move player back to the previous room
