@@ -28,6 +28,7 @@ def DFT(starting_node, ancestor_hashmap):
     while s.size() > 0:
         curr_path = s.pop()
         curr_node = curr_path[-1]
+        print(curr_node)
 
         if len(curr_path) > longest_path and curr_node != starting_node:
             longest_path = len(curr_path)

@@ -135,6 +135,34 @@ class SocialGraph:
             else:
                 collisions += 1
 
+    def populate_graph3(self, num_users, avg_friendships):
+        def randomize(arr, n):
+            # Start from the last element and swap one by one. We don't
+            # need to run for the first element that's why i > 0
+            for i in range(n-1, 0, -1):
+                # Pick a random index from 0 to i
+                j = random.randint(0, i+1)
+                # Swap arr[i] with the element at random index
+                arr[i], arr[j] = arr[j], arr[i]
+            return arr
+
+        for i in range(num_users):
+            self.add_user(i)
+
+        all_friend_combos = []
+        for person in range(1, num_users):
+            for friend in range(person + 1, num_users + 1):
+                all_friend_combos.append((person, friend))
+
+        shuffled_combos = randomize(all_friend_combos, len(all_friend_combos))
+
+        total_friendships = num_users * avg_friendships
+        elements_needed = total_friendships // 2
+        combos_to_make = shuffled_combos[:elements_needed]
+
+        for friendship in combos_to_make:
+            self.add_friendship(friendship[0], friendship[1])
+
     def get_all_social_paths(self, user_id):
         """
         Takes a user's user_id as an argument
@@ -178,7 +206,7 @@ class SocialGraph:
 
 if __name__ == '__main__':
     sg = SocialGraph()
-    sg.populate_graph(10, 2)
+    sg.populate_graph3(10, 2)
     print("\n")
     print("Friendships: ", sg.friendships)
     connections = sg.get_all_social_paths(1)
