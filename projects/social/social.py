@@ -173,32 +173,23 @@ class SocialGraph:
         The key is the friend's ID and the value is the path.
         """
         if len(self.friendships) > 0:
-            # {key -> friend_id, value -> [shortest friendship path between user_id and friend]}
-            results = {}
-            # Iterate thru social network
-            for user in self.users:
-                # BFS to find shortest path of connections to get from user_id to current_user in loop
-                q = Queue()
-                visited = set()
+            visited = {}
+            q = Queue()
+            q.enqueue([user_id])
 
-                q.enqueue([user_id])
+            while q.size() > 0:
+                curr_path = q.dequeue()
+                curr_vertex = curr_path[-1]
 
-                while q.size() > 0:
-                    curr_path = q.dequeue()
-                    curr_user = curr_path[-1]
+                if curr_vertex not in visited:
+                    visited[curr_vertex] = curr_path
 
-                    if curr_user not in visited:
-                        if curr_user == user:
-                            results[user] = curr_path
+                    for friend in self.friendships[curr_vertex]:
+                        path_copy = curr_path[:]
+                        path_copy.append(friend)
+                        q.enqueue(path_copy)
 
-                        visited.add(curr_user)
-
-                        for friend in self.get_friendships(curr_user):
-                            path_copy = curr_path[:]
-                            path_copy.append(friend)
-                            q.enqueue(path_copy)
-
-            return results
+            return visited
 
         else:
             print("There are currently no friendship paths in the network")
@@ -206,7 +197,7 @@ class SocialGraph:
 
 if __name__ == '__main__':
     sg = SocialGraph()
-    sg.populate_graph3(10, 2)
+    sg.populate_graph(10, 2)
     print("\n")
     print("Friendships: ", sg.friendships)
     connections = sg.get_all_social_paths(1)
