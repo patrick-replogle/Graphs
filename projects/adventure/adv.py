@@ -37,22 +37,22 @@ convert_direction = {
 
 # Function to retrieve the number of unexplored exits for a room
 def get_number_of_unexplored_paths(room):
-    rooms_left = 0
+    unexplored_exits_count = 0
 
     for direction in room:
         if room[direction] == "?":
-            rooms_left += 1
+            unexplored_exits_count += 1
 
-    return rooms_left
+    return unexplored_exits_count
 
 
 # Function to build initial visited dict entry. Ex ouput -> visited[room_id] = { "n": ?, "s": ?, "e": ?, "w": ? }
 def build_initial_dict_entry_value(visited, room):
-    exits = room.get_exits()
+    possible_room_exits = room.get_exits()
 
     visited[room.id] = {}
 
-    for move in exits:
+    for move in possible_room_exits:
         visited[room.id][move] = "?"
 
 
@@ -82,7 +82,7 @@ def get_traversal_directions(maze):
                     final_directions.append(move)
                     # Append the actual move into the final_directions arr
                     reverse_directions.append(backtrack_move)
-                    # Replace the question mark at visited[prev_room_id] = { move: new_room_id }
+                    # Replace the question mark at visited[prev_room_id] = { move: new_room_id } with current_room_id
                     visited[prev_room_id][move] = new_player.current_room.id
                     # Check if the new room has been visited already
                     if new_player.current_room.id not in visited:
